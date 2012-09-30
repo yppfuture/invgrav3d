@@ -51,55 +51,57 @@ alphaz=1.0;
 %Create derivative matrices
 % This is just a test... the new conjugate gradient script (conjgrad3D)
 % only computes the non-zero terms.
+tic
+Wx=getWx3D(mcell,nX,nY,nZ);
+Wy=getWy3D(mcell,nX,nY,nZ);
+Wz=getWz3D(mcell,nX,nY,nZ);
 
-% Wx=getWx3D(mcell,nX,nY,nZ);
-% Wy=getWy3D(mcell,nX,nY,nZ);
-% Wz=getWz3D(mcell,nX,nY,nZ);
-%
-% WxtWx=alphax*(Wx')*Wx;
-% WztWz=alphaz*(Wz')*Wz;
-% dm1x=Wx'*Wx*m;
-% dm1y=Wy'*Wy*m;
-% dm1z=Wz'*Wz*m;
-%
-% dmx=zeros(mcell,1);
-% for ii=1:(mcell)
-%     if ii<=nZ
-%         dmx(ii)=m(ii)-m(ii+nZ);
-%     elseif ii>nZ && ii<=(mcell-nX*nZ)
-%         dmx(ii)=-m(ii-nZ)+2*m(ii)-m(ii+nZ);
-%     elseif ii>(mcell-nX*nZ)&& ii<=(mcell-(nX-1)*nZ)
-%         dmx(ii)=-m(ii-nZ)+m(ii);
-%     else
-%         dmx(ii)=0;
-%     end
-% end
-% 
-% dmy=zeros(mcell,1);
-% for ii=1:(mcell)
-%     if ii<=nZ*nX
-%         dmy(ii)=m(ii)-m(ii+nZ*nX);
-%     elseif ii>nZ*nX && ii<=(mcell-nX*nZ)
-%         dmy(ii)=-m(ii-nZ*nX)+2*m(ii)-m(ii+nZ*nX);
-%     else
-%         dmy(ii)=-m(ii-nZ*nX)+m(ii);
-%     end
-% end
-% 
-% dmz=zeros(mcell,1);
-% count=0;
-% for ii=1:(mcell)
-%     count=count+1;
-%     if count==1
-%        dmz(ii)=m(ii)-m(ii+1);
-%     elseif count==8
-%         dmz(ii)=-m(ii-1)+2*m(ii);
-%         count=0;
-%     else
-%         dmz(ii)=-m(ii-1)+2*m(ii)-m(ii+1);
-%     end
-% end
+WxtWx=alphax*(Wx')*Wx;
+WytWy=alphay*(Wy')*Wy;
+WztWz=alphaz*(Wz')*Wz;
+dm1x=Wx'*Wx*m;
+dm1y=Wy'*Wy*m;
+dm1z=Wz'*Wz*m;
+toc
+tic
+dmx=zeros(mcell,1);
+for ii=1:(mcell)
+    if ii<=nZ
+        dmx(ii)=m(ii)-m(ii+nZ);
+    elseif ii>nZ && ii<=(mcell-nX*nZ)
+        dmx(ii)=-m(ii-nZ)+2*m(ii)-m(ii+nZ);
+    elseif ii>(mcell-nX*nZ)&& ii<=(mcell-(nX-1)*nZ)
+        dmx(ii)=-m(ii-nZ)+m(ii);
+    else
+        dmx(ii)=0;
+    end
+end
 
+dmy=zeros(mcell,1);
+for ii=1:(mcell)
+    if ii<=nZ*nX
+        dmy(ii)=m(ii)-m(ii+nZ*nX);
+    elseif ii>nZ*nX && ii<=(mcell-nX*nZ)
+        dmy(ii)=-m(ii-nZ*nX)+2*m(ii)-m(ii+nZ*nX);
+    else
+        dmy(ii)=-m(ii-nZ*nX)+m(ii);
+    end
+end
+
+dmz=zeros(mcell,1);
+count=0;
+for ii=1:(mcell)
+    count=count+1;
+    if count==1
+       dmz(ii)=m(ii)-m(ii+1);
+    elseif count==8
+        dmz(ii)=-m(ii-1)+2*m(ii);
+        count=0;
+    else
+        dmz(ii)=-m(ii-1)+2*m(ii)-m(ii+1);
+    end
+end
+toc
 
 % INVERSION
 model_comp=conjgrad3D(m0,G,data,nX,nY,nZ);
