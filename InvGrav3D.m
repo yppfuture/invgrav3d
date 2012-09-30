@@ -13,7 +13,7 @@ UBC_mesh=importdata('UBC_mesh.msh', ' ', 0);
 % model=importdata('model.dat', ' ', 0);
 
 %Extract cell dimensions from UBC mesh file
-[dX,dY,dZ]=getmesh(UBC_mesh);
+[dX,dY,dZ] = getmesh(UBC_mesh);
 
 nX=length(dX);
 nY=length(dY);
@@ -47,6 +47,7 @@ alphaz=1.0;
 
 %Build depth weighting (
 % Wr=get_Wr(nX,nY,nZ);
+<<<<<<< HEAD
 
 %Create derivative matrices
 % This is just a test... the new conjugate gradient script (conjgrad3D)
