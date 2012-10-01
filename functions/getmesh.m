@@ -1,12 +1,12 @@
 function [dX,dY,dZ]=getmesh(UBC_mesh)
 
-mesh=UBC_mesh';
+mesh = UBC_mesh';
 
-xmax=mesh(1);
-ymax=mesh(2);
-zmax=mesh(3);
+xmax = mesh(1);
+ymax = mesh(2);
+zmax = mesh(3);
 
-header=6;
+header = 6;
 for ii=1:xmax
     dX(ii)=mesh(header+ii);
 end

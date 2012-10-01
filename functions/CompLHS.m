@@ -1,15 +1,15 @@
-function [LHS] = CompLHS(m, G, nX, nY, nZ)
+function [LHS] = CompLHS(m, G, nx, ny, nz)
 
-mcell = nX * nY * nZ;
+mcell = nx * ny * nz;
 
 dmx = zeros(mcell,1);
 for ii = 1 : (mcell)
-    if ii <= nZ
-        dmx(ii) = m(ii) - m(ii + nZ);
-    elseif ii > nZ && ii <= (mcell - nX * nZ)
-        dmx(ii) = -m(ii - nZ) + 2 * m(ii) - m(ii + nZ);
-    elseif ii > (mcell - nX * nZ) && ii <= (mcell - (nX - 1) *nZ)
-        dmx(ii) = -m(ii - nZ) + m(ii);
+    if ii <= nz
+        dmx(ii) = m(ii) - m(ii + nz);
+    elseif ii > nz && ii <= (mcell - nx * nz)
+        dmx(ii) = -m(ii - nz) + 2 * m(ii) - m(ii + nz);
+    elseif ii > (mcell - nx * nz) && ii <= (mcell - (nx - 1) *nz)
+        dmx(ii) = -m(ii - nz) + m(ii);
     else
         dmx(ii) = 0;
     end
@@ -17,12 +17,12 @@ end
 
 dmy = zeros( mcell, 1);
 for ii = 1 : (mcell)
-    if ii <= nZ * nX
-        dmy(ii) = m(ii) - m(ii + nZ * nX);
-    elseif ii > nZ * nX && ii <= (mcell - nX * nZ)
-        dmy(ii)= -m(ii - nZ * nX) + 2 * m(ii) - m(ii + nZ * nX);
+    if ii <= nz * nx
+        dmy(ii) = m(ii) - m(ii + nz * nx);
+    elseif ii > nz * nx && ii <= (mcell - nx * nz)
+        dmy(ii)= -m(ii - nz * nx) + 2 * m(ii) - m(ii + nz * nx);
     else
-        dmy(ii)= -m(ii - nZ * nX) + m(ii);
+        dmy(ii)= -m(ii - nz * nx) + m(ii);
     end
 end
 
@@ -32,7 +32,7 @@ for ii = 1 : mcell
     count = count + 1;
     if count == 1 
        dmz(ii) = m(ii) - m(ii+1);
-    elseif count == nZ
+    elseif count == nz
         dmz(ii) = -m(ii - 1) + 2 * m(ii);
         count = 0;
     else
@@ -40,7 +40,7 @@ for ii = 1 : mcell
     end
 end
 
-% Use symmetry to speed up.
+% % Use symmetry to speed up.
 GtG_rowii = zeros(1,size(G, 2));
 GtGm = zeros(mcell, 1);
 for ii = 1 : size(G, 2)
@@ -54,3 +54,4 @@ for ii = 1 : size(G, 2)
 end
 
 LHS = dmx + dmy + dmz + GtGm;
+return
