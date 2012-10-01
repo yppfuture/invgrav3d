@@ -54,4 +54,5 @@ for ii = 1 : size(G, 2)
 end
 
 LHS = dmx + dmy + dmz + GtGm;
+
 return

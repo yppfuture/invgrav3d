@@ -1,3 +1,3 @@
 # InvGrav3D
 
-Collaborative effort to hack on some sweet code
+Collaborative effort to hack some real-time simulation software

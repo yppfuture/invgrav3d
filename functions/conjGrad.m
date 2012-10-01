@@ -1,4 +1,4 @@
-function m0 = conjgrad3D(m0, G, d, nX ,nY ,nZ)
+function m0 = conjGrad(m0, G, d, nx ,ny ,nz)
 
 %Compute residual iteratively. Computes in order:
 % 1- the derivative terms WxtWx*m , WytWy*m, WztWz*m
@@ -7,39 +7,38 @@ function m0 = conjgrad3D(m0, G, d, nX ,nY ,nZ)
 % 4- The right-hand-side G'*WdtWd*d
 % r=(A*(x0)-RHS);
 
-wd = std(d);
+%wd = std(d);
 
-LHS = getLHS(m0, G, nX, nY, nZ);
+LHS = getLHS(m0, G, nx, ny, nz);
 RHS = G' * d;
 
 r = (LHS - RHS);
 p = -r;
 
 rold = r' * r;
-rnorm = norm(r);
-dnorm = norm(RHS);
+%rnorm = norm(r);
+%dnorm = norm(RHS);
 count = 1;
-error = rnorm / dnorm;
-misfit(count) = norm(r)^2;
+%error = rnorm / dnorm;
+%misfit(count) = norm(r)^2;
 
 while (count) < 10%error>=10e-4
 
-    Ap = getLHS(p, G, nX, nY, nZ);
+    Ap = getLHS(p, G, nx, ny, nz);
     alpha =rold ./ (p' * Ap);
-   
-    
+
+
     m0 = m0 + alpha .* p;
 
-    r = r + alpha * Ap;     
+    r = r + alpha * Ap;
     rnew = r' * r;
     p = -r + rnew / rold .* p;
     rold = rnew;
-    
-    rnorm = norm(r);
-    error = rnorm / dnorm;
+
+    %rnorm = norm(r);
+    %error = rnorm / dnorm;
     count = count + 1;
-    misfit(count) = norm(r)^2;
+    %misfit(count) = norm(r)^2;
 
-    
+
 end
-

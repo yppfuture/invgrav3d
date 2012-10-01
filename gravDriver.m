@@ -6,13 +6,14 @@ clear all
 close all
 addpath data
 addpath functions
+addpath ../matlab/imStacks
 
 load data;
 load kernel;
 load model;
 
 %Extract cell dimensions from UBC mesh file
-[dx,dy,dz] = getmesh( importdata('UBC_mesh.msh', ' ', 0) );
+[dx, dy, dz] = getMesh( importdata('UBC_mesh.msh', ' ', 0) );
 
 nx = length(dx);
 ny = length(dy);
@@ -45,5 +46,10 @@ alphax = 1.0;
 alphay = 1.0;
 alphaz = 1.0;
 
-model_comp = conjgrad3D(m0, G, data, nx, ny, nz);
-save('data/model_out.dat','-ascii','model_comp')
+
+invm = conjGrad(m0, G, data, nx, ny, nz);
+%save('data/model_out.dat','-ascii','model_comp')
+
+Slicer(reshape(invm, nz, nx, ny))
+
+%Slicer(reshape(m, nz, nx, ny))
