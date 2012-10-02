@@ -40,17 +40,27 @@ for ii = 1 : mcell
     end
 end
 
-% % Use symmetry to speed up.
-GtG_rowii = zeros(1,size(G, 2));
-GtGm = zeros(mcell, 1);
-for ii = 1 : size(G, 2)
-    for jj = 1 : size(G,2)
-        GtG_rowii(jj) = 0;
-        for kk = 1 : size(G, 1)
+N = size(G, 2);
+M = size(G, 1);
+GtG_rowii = zeros(1, N);
+GtGm = zeros(N, 1);
+
+for ii = 1 : N % Main Loop
+    
+    for jj = ii : N  % Note loop runs from ii -> N
+        GtG_rowii(jj) = 0; % Clear previous results
+        
+        for kk = 1 : M % Dot product of G columns
             GtG_rowii(jj) = GtG_rowii(jj) + G(kk, ii) * G(kk, jj);
+        end     
+        GtGm(ii) = GtGm(ii) + GtG_rowii(jj) * m(jj); % Compute top half of triangle
+    end
+    
+    if ii + 1 <= N
+        for ll = ii + 1 : N 
+            GtGm(ll) = GtGm(ll) + GtG_rowii(ll) * m(ii); % Compute lower half of triangle
         end
     end
-    GtGm(ii) = GtG_rowii * m;
 end
 
 LHS = dmx + dmy + dmz + GtGm;
