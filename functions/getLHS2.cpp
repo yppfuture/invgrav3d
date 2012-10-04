@@ -10,7 +10,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
   mxArray *m_in, *G_in;
   const mwSize *dims, *mdim;
   double *m, *G, *LHS;
-  int i, j, k, nx, nz, ny;
+  int i, j, k, l, nx, nz, ny;
   long int mcell;
 
   //unpack MEX wrapper input
@@ -94,13 +94,22 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
   for(i = 0; i < dims[1]; i++) {
     LHS[i] = 0;
-    for(j = 0; j < dims[1]; j++) {
-      GtG_row[j] = 0;
+  }
+
+  for(i = 0; i < dims[1]; i++) {
+    for(j = i; j < dims[1]; j++) {
+      GtG_row[j] = 0; // initialize and reset GTG_row
       for(k = 0; k < dims[0]; k++) {
             GtG_row[j] += G[k + dims[0] * i] * G[k + dims[0] * j];
       }
       LHS[i] += GtG_row[j] * m[j];
     }
+    if ( (i + 1) < dims[1]) {
+      for(l = i + 1; l < dims[1]; l++) {
+        LHS[l] += GtG_row[l] * m[i];
+      }
+    }
     LHS[i] += dmx[i] + dmy[i] + dmz[i];
   }
+
 }

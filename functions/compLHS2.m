@@ -1,4 +1,4 @@
-function [LHS] = compLHS(m, G, nx, ny, nz)
+function [LHS] = compLHS2(m, G, nx, ny, nz)
 
 mcell = nx * ny * nz;
 
@@ -45,22 +45,15 @@ M = size(G, 1);
 GtG_rowii = zeros(1, N);
 GtGm = zeros(N, 1);
 
-for ii = 1 : N % Main Loop
-    
-    for jj = ii : N  % Note loop runs from ii -> N
-        GtG_rowii(jj) = 0; % Clear previous results
-        
-        for kk = 1 : M % Dot product of G columns
+for ii = 1 : N
+    for jj = 1 : N
+        GtG_rowii(jj) = 0;
+        for kk = 1 : M
             GtG_rowii(jj) = GtG_rowii(jj) + G(kk, ii) * G(kk, jj);
-        end     
-        GtGm(ii) = GtGm(ii) + GtG_rowii(jj) * m(jj); % Compute top half of triangle
+        end
+        GtGm(ii) = GtGm(ii) + GtG_rowii(jj) * m(jj);
     end
     
-    if ii + 1 <= N
-        for ll = ii + 1 : N 
-            GtGm(ll) = GtGm(ll) + GtG_rowii(ll) * m(ii); % Compute lower half of triangle
-        end
-    end
 end
 
 LHS = dmx + dmy + dmz + GtGm;

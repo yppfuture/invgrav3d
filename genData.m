@@ -53,10 +53,10 @@ n = size(ObsX, 2) * size(ObsY, 1);
 
 count = 1;
 % Build forward operator
-for ii=1:n;
-        G(count,:) = forwardGrav(nx, ny, nz, X0, Y0, Z0,...
-            dx, dy, dz, ObsX(ii), ObsY(ii), ObsZ);
-count = count + 1;
+for ii = 1 : n;
+    G(count, :) = forwardGrav(nx, ny, nz, X0, Y0, Z0, ...
+                 dx, dy, dz, ObsX(ii), ObsY(ii), ObsZ);
+    count = count + 1;
 end
 
 set(gca,'YDir','reverse')
