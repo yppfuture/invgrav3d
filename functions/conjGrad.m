@@ -1,4 +1,4 @@
-function m0 = conjGrad(m0, G, d, nx ,ny ,nz)
+function m0 = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, beta)
 
 %Compute residual iteratively. Computes in order:
 % 1- the derivative terms WxtWx*m , WytWy*m, WztWz*m
@@ -9,7 +9,7 @@ function m0 = conjGrad(m0, G, d, nx ,ny ,nz)
 
 %wd = std(d);
 
-LHS = getLHS(m0, G, nx, ny, nz);
+LHS = compLHS_v3(m0, G, Wr, wd, nx, ny, nz) * beta;
 RHS = G' * d;
 
 r = (LHS - RHS);
@@ -22,9 +22,9 @@ count = 1;
 %error = rnorm / dnorm;
 %misfit(count) = norm(r)^2;
 
-while (count) < 10%error>=10e-4
-
-    Ap = getLHS(p, G, nx, ny, nz);
+while (count) < 5%error>=10e-4
+tic
+    Ap = compLHS_v3(p, G, Wr, wd, nx, ny, nz) * beta;
     alpha =rold ./ (p' * Ap);
 
 
@@ -39,6 +39,6 @@ while (count) < 10%error>=10e-4
     %error = rnorm / dnorm;
     count = count + 1;
     %misfit(count) = norm(r)^2;
-
+toc
 
 end

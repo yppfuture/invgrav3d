@@ -1,4 +1,4 @@
-function [LHS] = CompLHS(m, G, nx, ny, nz)
+function [LHS] = compLHS_v3(m, G, Wr, wd, nx, ny, nz)
 
 mcell = nx * ny * nz;
 LHS=zeros( mcell, 1);
@@ -13,6 +13,7 @@ for ii = 1 : (mcell)
     else
         dmx(ii) = 0;
     end
+    dmx(ii)=dmx(ii)*Wr(ii);
 end
 
 dmy = zeros( mcell, 1);
@@ -24,6 +25,7 @@ for ii = 1 : (mcell)
     else
         dmy(ii)= -m(ii - nz * nx) + m(ii);
     end
+    dmy(ii)=dmy(ii)*Wr(ii);
 end
 
 dmz = zeros(mcell, 1);
@@ -38,20 +40,28 @@ for ii = 1 : mcell
     else
         dmz(ii) = -m(ii - 1) + 2 * m(ii) - m(ii + 1);
     end
+    dmz(ii)=dmz(ii)*Wr(ii);
 end
 
 % % Use symmetry to speed up.
 GtG_rowii = zeros(1,size(G, 2));
+GtG_mjj=0;
+
 % GtGm = zeros(mcell, 1);
 for ii = 1 : size(G, 2)
-    for jj = i : size(G, 2)
-        GtG_rowii(jj) = 0;
+    for jj = ii : size(G, 2)
+        GtG_rowii(jj) = LHS(jj);
         for kk = 1 : size(G, 1)
             GtG_rowii(jj) = GtG_rowii(jj) + G(kk+size(G,1)*(ii-1)) * G(kk+size(G,1)*(jj-1));
         end
-      LHS(ii) = LHS(ii)+GtG_rowii(jj) * m(jj);  
+%         GtG_m=GtG_rowii(jj) * m(jj);
+      GtG_mjj = GtG_mjj+GtG_rowii(jj) * m(jj);
+      LHS(jj)=LHS(jj)+GtG_rowii(jj) * m(jj);
+%       if (ii<size(G, 2))
+%           LHS(1)=GtG_rowii(1) * m(ii);
+%       end
     end
-    LHS(ii) = LHS(ii)+ dmx(ii) + dmy(ii) + dmz(ii);
+    LHS(ii) = GtG_mjj + dmx(ii) + dmy(ii) + dmz(ii);
 end
 
 

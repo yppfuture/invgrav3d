@@ -94,13 +94,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
   for(i = 0; i < dims[1]; i++) {
     LHS[i] = 0;
-    for(j = 0; j < dims[1]; j++) {
+    for(j = 1; j < dims[1]; j++) {
       GtG_row[j] = 0;
       for(k = 0; k < dims[0]; k++) {
-            GtG_row[j] += G[k + dims[0] * i] * G[k + dims[0] * j];
+            GtG_row[j] = GtG_row[j] + G[k + dims[0] * i] * G[k + dims[0] * j];
       }
-      LHS[i] += GtG_row[j] * m[j];
+      LHS[i] = LHS[i] + GtG_row[j] * m[j];
     }
-    LHS[i] += dmx[i] + dmy[i] + dmz[i];
+    LHS[i] = LHS[i] + dmx[i] + dmy[i] + dmz[i];
   }
 }

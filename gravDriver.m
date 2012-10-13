@@ -11,6 +11,7 @@ addpath ../matlab/imStacks
 load data;
 load kernel;
 load model;
+load Wr;
 
 %Extract cell dimensions from UBC mesh file
 [dx, dy, dz] = getMesh( importdata('UBC_mesh.msh', ' ', 0) );
@@ -46,10 +47,14 @@ alphax = 1.0;
 alphay = 1.0;
 alphaz = 1.0;
 
+% Define coefficients
 
-invm = conjGrad(m0, G, data, nx, ny, nz);
-%save('data/model_out.dat','-ascii','model_comp')
+beta=1e-1; % Trade-off parameter
+wd=std(data).^(1/2);
+invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, beta);
+save('data/model_out.dat','-ascii','invm')
 
-Slicer(reshape(invm, nz, nx, ny))
+misfit=sqrt(sum((G*invm-mdata).^2));
+% Slicer(reshape(invm, nz, nx, ny))
 
 %Slicer(reshape(m, nz, nx, ny))

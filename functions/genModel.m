@@ -6,9 +6,9 @@ function [model] = genModel(nx, ny, nz, background, anomaly, target)
 model=ones(nz, nx, ny) * background;
 
 
-for ii = (target(1) + [-2 : 2])
-    for jj = (target(2) + [-2 : 2])
-        for kk = (target(3) + [-2 : 2])
+for ii = (target(1) + [-1 : 1])
+    for jj = (target(2) + [-1 : 1])
+        for kk = (target(3) + [-1 : 1])
         model(kk, ii, jj) = anomaly;
         end
     end

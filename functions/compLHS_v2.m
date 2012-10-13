@@ -44,12 +44,15 @@ end
 GtG_rowii = zeros(1,size(G, 2));
 % GtGm = zeros(mcell, 1);
 for ii = 1 : size(G, 2)
-    for jj = i : size(G, 2)
+    for jj = ii : size(G, 2)
         GtG_rowii(jj) = 0;
         for kk = 1 : size(G, 1)
             GtG_rowii(jj) = GtG_rowii(jj) + G(kk+size(G,1)*(ii-1)) * G(kk+size(G,1)*(jj-1));
         end
-      LHS(ii) = LHS(ii)+GtG_rowii(jj) * m(jj);  
+      LHS(ii) = LHS(ii)+GtG_rowii(jj) * m(jj);
+      if (ii<size(G, 2))
+          LHS(1)=GtG_rowii(1) * m(ii);
+      end
     end
     LHS(ii) = LHS(ii)+ dmx(ii) + dmy(ii) + dmz(ii);
 end
