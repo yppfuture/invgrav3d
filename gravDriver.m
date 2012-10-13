@@ -50,7 +50,7 @@ alphaz = 1.0;
 % Define coefficients
 
 beta=1e-1; % Trade-off parameter
-wd=std(data).^(1/2);
+wd=std(data);
 invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, beta);
 save('data/model_out.dat','-ascii','invm')
 
