@@ -51,7 +51,7 @@ alphaz = 1.0;
 
 beta=1e-1; % Trade-off parameter
 wd=std(data);
-invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, beta);
+invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta);
 save('data/model_out.dat','-ascii','invm')
 
 misfit=sqrt(sum((G*invm-mdata).^2));
