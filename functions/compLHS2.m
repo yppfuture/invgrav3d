@@ -30,7 +30,7 @@ dmz = zeros(mcell, 1);
 count = 0;
 for ii = 1 : mcell
     count = count + 1;
-    if count == 1 
+    if count == 1
        dmz(ii) = m(ii) - m(ii+1);
     elseif count == nz
         dmz(ii) = -m(ii - 1) + 2 * m(ii);
@@ -53,7 +53,7 @@ for ii = 1 : N
         end
         GtGm(ii) = GtGm(ii) + GtG_rowii(jj) * m(jj);
     end
-    
+
 end
 
 LHS = dmx + dmy + dmz + GtGm;
