@@ -16,4 +16,4 @@ end
 
 end
 
-%checking to see if I can commit changes to remote.
+%checking to see if I can commit changes to remote
