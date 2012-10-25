@@ -14,7 +14,7 @@ function derivTest(f, df, n)
 %   3) f(x+a) - f(a) - hf'(a) = O(h^2)
 %
 %   As h is decreased by orders of magnitude equation 2) should drop of as
-%   O(h) (slope ~ 1) and equation 3) should drop off as O(h^2) (slope ~ 2)
+%   O(h) and equation 3) should drop off as O(h^2).
 
 % Random model
 x = randn(n, 1);
