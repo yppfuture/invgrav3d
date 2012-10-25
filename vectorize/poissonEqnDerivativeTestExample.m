@@ -3,7 +3,6 @@ clear all
 close all
 
 %% Set constants
-
 nn =  8;
 L = 1;
 
@@ -19,12 +18,10 @@ h3 = L/n3;
 
 %% Operators %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%% OPERATORS
 % derivative function (calculating from nodes to centre) <DIV>
 ddxc = @(m,k) 1/k*spdiags([-ones(m+1,1) ones(m+1,1)],[0,1],m,m+1); 
 % Average function (Go from centres to walls (will also need ghost))
 av = @(m) 0.5*spdiags([ones(m,1) ones(m,1)],[-1,0],m+1,m); 
-%%%%%%% 
 
 Dc1  =  ddxc(n1, h1);  % Create 1D Operators 
 Dc2  = ddxc(n2, h2);  % Create 1D Operators 
@@ -48,6 +45,7 @@ kron3 = @(a, b, c)  kron(a, kron(b, c));
 DC1 = kron3(I(n3), I(n2), Dc1);
 DC2 = kron3(I(n3), Dc2, I(n1));
 DC3 = kron3(Dc3, I(n2), I(n1));
+
 % 3d averaging operators
 A1 = kron3(I(n3), I(n2), Av1);
 A2 = kron3(I(n3), Av2, I(n1));
@@ -69,6 +67,7 @@ diagm = @(m) spdiags(1./m.^2, 0, nnn, nnn) ;
 
 % Inverse of Avg*1/m diagonalized ie diag( 1/(Avg*(1/m)) )
 Ainv = @(A, m) ( spdiags(1./(A*(1./m)), 0, size(A, 1), size(A, 1)) );
+
 % Big block diag of the inverse averaged m operator above
 diagAvgm = @(m) (blkdiag(Ainv(A1,m), Ainv(A2, m), Ainv(A3, m)));
 
