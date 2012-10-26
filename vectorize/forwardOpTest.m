@@ -3,7 +3,7 @@ close all
 % Set up dimensions
 
 N = 6:2:40;
-N = 10;
+N = 14;
 
 %% Graded Mesh (dumb octree)
 curve = 4;
@@ -13,8 +13,8 @@ weight = 0.1; % Percent finer mesh at finest scale to coarsest.
 centre = @(x) x(1:end - 1) + 0.5*diff(x);
 % Get function for creating meshes with given arguments. See meshfunc for
 % details.
-gmesh = meshfunc(curve, weight, false);
-
+%gmesh = meshfunc(curve, weight);
+gmesh = meshgui();
 % Outer Test loop, for testing computational time.
 for tt = 1:length(N)
     
@@ -26,6 +26,8 @@ for tt = 1:length(N)
     xc = centre(x);
     yc = centre(y);
 
+    plotMesh(z, x)
+    
     nz = length(zc);
     nx = length(xc);
     ny = length(yc);

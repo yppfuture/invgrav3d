@@ -1,4 +1,4 @@
-function func = meshfunc(curve, weight, varagin) %#ok<INUSD>
+function func = meshfunc(curve, weight)
 %MESHFUNC Returns function of set parmaters for building graded meshes.
 %   Meshfunc takes a set of parameters and an optional interactive mode
 %   flag and returns a function for building graded meshes. The returned
@@ -13,32 +13,12 @@ function func = meshfunc(curve, weight, varagin) %#ok<INUSD>
 %   change of dx spacing. Weight, which adjusts the ratio between the
 %   larger dx spacing at the boundaries and the smallest dx spacing in the
 %   centre dx(centre) / dx(boundary).
-%   Meshfunc also takes the optional parameter interactive, which should
-%   set to either true, or false or left out. Default is false.
-%   IF set to true, it allows user to choose a c and w paramter
-%   dynamically. When the user presses the Accept button a return func
-%   will be created using the parameters from the last iteration, the
-%   parameters shown on the plot and as the default values in the dialogue
-%   box.
-
 
 %   Ben Postlethwaite 2012
 %   benpostlethwaite.ca
 
 c = curve;
 w = weight;
-n = 40;
-interactive = false;
-
-if nargin == 3
-    interactive = varagin;
-end
-
-if interactive
-    out = meshgui();
-    c = out(1);
-    w = out(2);
-end
 
 % Gmesh builds a fat parabola with minimum dictated by wieght
 % The w/(1-w) is necessary to that the scaling is preserved.
