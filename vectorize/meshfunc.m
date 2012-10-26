@@ -1,0 +1,90 @@
+function func = meshfunc(curve, weight, varagin) %#ok<INUSD>
+%MESHFUNC Returns function of set parmaters for building graded meshes.
+%   Meshfunc takes a set of parameters and an optional interactive mode
+%   flag and returns a function for building graded meshes. The returned
+%   function takes a regularly spaced vector x and returns a two vectors.
+%
+%   gmesh = meshfunc(curve, wieght, interactive)
+%   [x, dx] = gmesh( linspace(0, 1, n) )
+%
+%   x samples values on the graded mesh and dx is equal to diff(x)
+%
+%   The Inputs to meshfunc are curve - which adjusts the steepness in the
+%   change of dx spacing. Weight, which adjusts the ratio between the
+%   larger dx spacing at the boundaries and the smallest dx spacing in the
+%   centre dx(centre) / dx(boundary).
+%   Meshfunc also takes the optional parameter interactive, which should  
+%   set to either true, or false or left out. Default is false.
+%   IF set to true, it allows user to choose a c and w paramter
+%   dynamically. When the user presses the cancel button a  return func 
+%   will be created using the parameters from the last iteration, the
+%   parameters shown on the plot and as the default values in the dialogue
+%   box.
+
+
+%   Ben Postlethwaite 2012
+%   benpostlethwaite.ca
+
+c = curve;
+w = weight;
+n = 40;
+interactive = false;
+
+if nargin == 3
+    interactive = varagin;
+end
+
+choosing = true;
+while choosing
+    
+    if ~interactive
+        choosing = false;
+    end
+
+    % Gmesh builds a fat parabola with minimum dictated by wieght
+    % The w/(1-w) is necessary to that the scaling is preserved.
+    gmesh = @(x) ((x - (x(end) - x(1))/2 - x(1)).^c + (w / (1-w) ) * ((x(end) - x(1))/2).^c);
+    % getdx turns gmesh into an x and dx
+    getdx = @(x) (x(end) - x(1)) * gmesh(x) / sum(gmesh(x));
+    %getdx = @(x) gmesh(x);
+    getx = @(x) cumsum([x(1), getdx(x)]);
+    % Project cell walls to centres
+    centre = @(x) x(1:end - 1) + 0.5*diff(x);
+    % Get dims performs a few function calls to make things easier.
+    func = @(x) deal( getx(centre(x)), getdx(centre(x)) );
+    
+    if interactive
+        
+        [x1, dx] = func( linspace(0, 1 , n) );
+        xc = centre(x1);
+             
+        h = figure();
+        plot(xc, dx, 'r*')
+        line([x1; x1], [ones(n,1)' * min(dx) ; ones(n,1)' *max(dx)],'Color',[.8 .8 .8])
+        xlim( [min(x1) - 0.01*min(x1), max(x1) + 0.01*min(x1)] )
+        ylim( [min(dx), max(dx) ] )
+        title(sprintf('Graded mesh with curve = %i, weight = %1.2f', c, w) )
+        legend('Calculated dx','mesh line \rho')
+        
+        prompt = {'Enter new parabolic curvature (transition rate):',...
+            'Enter new Weight, (ratio between largest and smallest dx):'};
+        dlg_title = 'Graded Mesh Function Builder';
+        num_lines = 1;
+        def = {num2str(c),num2str(w)};
+        answer = inputdlg(prompt, dlg_title, num_lines, def);
+        if isempty(answer)
+            choosing = false;
+            close(h)
+        else
+            c = str2double(answer{1});
+            w = str2double(answer{2});
+            close(h)
+        end
+
+    end
+    
+    
+end
+
+
+end
