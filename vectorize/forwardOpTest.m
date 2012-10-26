@@ -7,20 +7,20 @@ N = 10;
 
 %% Graded Mesh (dumb octree)
 curve = 4;
-w = 0.1; % Percent finer mesh at finest scale to coarsest.
+weight = 0.1; % Percent finer mesh at finest scale to coarsest.
 
 % Project cell walls to centres
 centre = @(x) x(1:end - 1) + 0.5*diff(x);
 % Get function for creating meshes with given arguments. See meshfunc for
 % details.
-getdims = meshfunc(4, 0.1, false);
+gmesh = meshfunc(curve, weight, false);
 
 % Outer Test loop, for testing computational time.
 for tt = 1:length(N)
     
-    [z, dz] = getdims(linspace(5, 6, N(tt) - 1));
-    [x, dx] = getdims(linspace(5, 6, N(tt)));
-    [y, dy] = getdims(linspace(5, 6, N(tt) + 1));
+    [z, dz] = gmesh(linspace(5, 6, N(tt) - 1));
+    [x, dx] = gmesh(linspace(5, 6, N(tt)));
+    [y, dy] = gmesh(linspace(5, 6, N(tt) + 1));
     
     zc = centre(z);
     xc = centre(x);
