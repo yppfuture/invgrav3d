@@ -2,6 +2,8 @@ clear all
 close all
 % Set up dimensions
 
+addpath ../utils
+
 N = 6:2:40;
 N = 14;
 
