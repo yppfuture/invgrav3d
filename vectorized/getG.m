@@ -1,28 +1,14 @@
-function [G] = getG(x,y,z,x0,y0,dx,dy,dz)
+function [G] = getG(n2,n3,n1,x,y,z,nobs,ObsX,ObsY,ObsZ)
 
-h = dx*dy*dz;
-
-g=zeros(length(x),length(y),length(z));
-G=zeros(length(x)*length(y)*length(z),length(x0)*length(y0));
-count = 1;
-for kk = 1:length(y0)
-for mm = 1:length(x0)   
-
-
-
-
-        for jj = 1:length(z)
-                for ii = 1:length(y)
-                   for qq = 1:length(x)
-                        g(qq,ii,jj) =(z(jj)*h)*1/(((x(qq)-x0(mm))^2 + (y(ii) - y0(kk))^2 + z(jj)^2).^(3/2));
-            
-                   end
-                end
-        end
-G(:,count) = reshape(g,[length(x)*length(y)*length(z),1]);
-count = count +1;       
-        
-end
-end
-
-end
+nnn = n2*n3
+e = @ (n) ones(n, 1);
+% Scale up dimensions to 3D
+kron3 = @(a, b, c)  kron(a, kron(b, c));
+% Kron observations to size G
+kronobs = @(obs) kron( e(nnn), obs(:)' );
+% Kron dimensions to size G
+Z = (kron( e(nobs)', kron3( e(n3), e(n2), z)) - kronobs(ObsZ));
+X = (kron( e(nobs)', kron3( e(n3), x, e(n1))) - kronobs(ObsX));
+Y = (kron( e(nobs)', kron3( y, e(n2), e(n1))) - kronobs(ObsY));
+R = (X.^2 + Y.^2 + Z.^2).^(3/2);
+G = Z * h .* 1./R;
