@@ -49,52 +49,52 @@ G = (6.67e-11)*(Z * dV .* 1./R);
 
 %% Test the operator for the nx = ny = nz = 10 case
  
-% rho = zeros(nx,ny,nz);
-% rho(:,5:6,5) = 1;      % add some buried feature of anomalous density
+rho = zeros(nx,ny,nz);
+rho(:,5:6,5) = 1;      % add some buried feature of anomalous density
+
+d = G*rho(:);  % G on rho (model) = data
+figure(1)
+contourf(reshape(d,nx,ny))
+
+%% Corrupt the signal
+
+dNoisy = (0.05*randn(size(d))+(0.01*min(d))) +d;
+figure(2)
+contourf(reshape(dNoisy,nx,ny))
 % 
-% d = G*rho(:);  % G on rho (model) = data
-% figure(1)
-% contourf(reshape(d,nx,ny))
+% %%  Getting there
 % 
-% %% Corrupt the signal
+% % Build the gradient operator *** - rework this for z=3 ***
 % 
-% dNoisy = (0.05*randn(size(d))+(0.01*min(d))) +d;
-% figure(2)
-% contourf(reshape(dNoisy,nx,ny))
-
-%%  Getting there
-
-% Build the gradient operator *** - rework this for z=3 ***
-
-d1 = spdiags([-e(nx)' e(nx)'],[0 1],nx,nx);
-d2 = spdiags([-e(ny)' e(ny)'],[0 1],ny,ny);
-d3 = spdiags([-e(nz)' e(nz)'],[0 1],nz,nz);
-
-D1 = kron3(d1,speye(ny),speye(nz)); % x dimension
-D2 = kron3(speye(nx),d2,speye(nz)); % y dimension
-D3 = kron3(speye(nx),speye(ny),d3); % z dimension
-
-DDD = [D1;D2;D3]; % 3Dify
-
-av1 = spdiags([e(nx)' e(nx)'],[0 1],nx,nx);
-av2 = spdiags([e(ny)' e(ny)'],[0 1],ny,ny);
-av3 = spdiags([e(nz)' e(nz)'],[0 1],nz,nz);
-
-AV1 = kron3(av1,speye(ny),speye(nz));
-AV2 = kron3(speye(nx),av2,speye(nz));
-AV3 = kron3(speye(nx),speye(ny),av3);
-
-AV = [AV1;AV2;AV3];
-
-% Build an A for Am=b to be used in conjugate gradient minimization
-
-beta = 1; % set this to one for now
-A = G'*G + beta*DDD'*diag(AV*e(nnn)')*DDD;
-
-% Build b for Am=b
-
-% b = G'd
-
+% d1 = spdiags([-e(nx)' e(nx)'],[0 1],nx,nx);
+% d2 = spdiags([-e(ny)' e(ny)'],[0 1],ny,ny);
+% d3 = spdiags([-e(nz)' e(nz)'],[0 1],nz,nz);
+% 
+% D1 = kron3(d1,speye(ny),speye(nz)); % x dimension
+% D2 = kron3(speye(nx),d2,speye(nz)); % y dimension
+% D3 = kron3(speye(nx),speye(ny),d3); % z dimension
+% 
+% DDD = [D1;D2;D3]; % 3Dify
+% 
+% av1 = spdiags([e(nx)' e(nx)'],[0 1],nx,nx);
+% av2 = spdiags([e(ny)' e(ny)'],[0 1],ny,ny);
+% av3 = spdiags([e(nz)' e(nz)'],[0 1],nz,nz);
+% 
+% AV1 = kron3(av1,speye(ny),speye(nz));
+% AV2 = kron3(speye(nx),av2,speye(nz));
+% AV3 = kron3(speye(nx),speye(ny),av3);
+% 
+% AV = [AV1;AV2;AV3];
+% 
+% % Build an A for Am=b to be used in conjugate gradient minimization
+% 
+% beta = 1; % set this to one for now
+% A = G'*G + beta*DDD'*diag(AV*e(nnn)')*DDD;
+% 
+% % Build b for Am=b
+% 
+% % b = G'd
+% 
 
 
 
