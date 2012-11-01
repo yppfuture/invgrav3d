@@ -1,4 +1,4 @@
-function m0 = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, beta)
+function [m0,error] = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, dx, dy, dz, beta, alphaS)
 
 %Compute residual iteratively. Computes in order:
 % 1- the derivative terms WxtWx*m , WytWy*m, WztWz*m
@@ -9,22 +9,24 @@ function m0 = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, beta)
 
 %wd = std(d);
 
-LHS = compLHS_v3(m0, G, Wr, wd, nx, ny, nz) * beta;
+LHS = compLHS_v4(m0, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
 RHS = G' * d;
 
 r = (LHS - RHS);
 p = -r;
 
 rold = r' * r;
-%rnorm = norm(r);
-%dnorm = norm(RHS);
+rnorm = norm(r);
+dnorm = norm(RHS);
 count = 1;
-%error = rnorm / dnorm;
-%misfit(count) = norm(r)^2;
+error(count) = rnorm / dnorm;
+% figure(1)=plot(count,error);
+% hold on
+% misfit(count) = norm(r)^2;
 
-while (count) < 5%error>=10e-4
+while (count) < 10%error>=10e-4
 tic
-    Ap = compLHS_v3(p, G, Wr, wd, nx, ny, nz) * beta;
+    Ap = compLHS_v4(p, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
     alpha =rold ./ (p' * Ap);
 
 
@@ -34,10 +36,13 @@ tic
     rnew = r' * r;
     p = -r + rnew / rold .* p;
     rold = rnew;
-
-    %rnorm = norm(r);
-    %error = rnorm / dnorm;
+    
     count = count + 1;
+    rnorm = norm(r);
+    error(count) = rnorm / dnorm;
+    
+%     figure(1)=plot(count,error);
+%     hold on
     %misfit(count) = norm(r)^2;
 toc
 

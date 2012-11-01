@@ -62,13 +62,13 @@ G=zeros(n,mcell);
 % Compute depth weigthing matrix
 % mode 0: distance weigthing , 1: depth weighting
 % pow: Power of the exponentiel decay (default 2 for grav, 3 for mag)
-Wr=zeros(1,mcell);
+Wr=zeros(mcell,1);
 mode=0;
 pow=2;
 
 % Build forward operator
 for ii=1:n;
-       [G(count,:),wr] = forwardGrav(nx, ny, nz, X0, Y0, Z0,...
+       [G(count,:),wr] = forwardGrav_v2(nx, ny, nz, X0, Y0, Z0,...
             dx, dy, dz, ObsX(ii), ObsY(ii), ObsZ);
 %         wr=CompWr(nx,ny,nz,dx,dy,dz,X0,Y0,Z0,ObsX(ii), ObsY(ii), ObsZ, mode,pow);
         Wr=Wr+wr;
@@ -78,7 +78,7 @@ end
 % Square root for the sum of the squares
 % Plus another square root of result because inside the objective function, 
 % but we will square after in WrtWr ... so only one sqrt.
-Wr=Wr.^(1/2);
+Wr=Wr.^(1/4);
 
 % Normalize depth weighting with the largest value
 Wr=Wr./max(Wr);
@@ -113,19 +113,22 @@ save('data/model.dat', '-ascii', 'm')
 %Create UBC observations file 
 save('data/Obs_grav.dat', '-ascii', 'd')
 
+%Create UBC model weight file 
+save('data/Wr.dat', '-ascii', 'Wr')
+
 fid=fopen('data/UBC_mesh.msh', 'w');
-fprintf(fid, '%i %i %i\n', nx, ny, nz)
-fprintf(fid, '%i %i %i\n', X0, Y0, Z0)
+fprintf(fid, '%i %i %i\n', nx, ny, nz);
+fprintf(fid, '%i %i %i\n', X0, Y0, Z0);
 
 
 for jj=1:nx
     fprintf(fid, '%4.2f ', dx(jj));
 end
-fprintf(fid,'\n',dx)
+fprintf(fid,'\n');
 for ii=1:ny
            fprintf(fid,'%4.2f ', dy(ii));
 end
-fprintf(fid, '\n', dx)
+fprintf(fid, '\n');
 for kk=1 : nz
        fprintf(fid, '%4.2f ', dz(kk));
 end

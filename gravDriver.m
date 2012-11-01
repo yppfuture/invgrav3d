@@ -34,7 +34,7 @@ mdata = length(data);
 % model=zeros(size(rho,1)*size(rho,2),1);
 % model(:)=rho(:)-background;
 
-m0 = zeros(mcell, 1);
+m0 = ones(mcell, 1)*1e-5;
 % m0(:)=background;
 
 %% Compute compact model using iterative method
@@ -51,10 +51,11 @@ alphaz = 1.0;
 
 beta=1e-1; % Trade-off parameter
 wd=std(data);
-invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, beta);
+[invm,misfit] = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
 save('data/model_out.dat','-ascii','invm')
 
-misfit=sqrt(sum((G*invm-mdata).^2));
+figure;plot(misfit);
+% misfit=sqrt(sum((G*invm-mdata).^2));
 % Slicer(reshape(invm, nz, nx, ny))
 
 %Slicer(reshape(m, nz, nx, ny))
