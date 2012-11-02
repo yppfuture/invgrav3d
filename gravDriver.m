@@ -51,7 +51,11 @@ alphaz = 1.0;
 
 beta=1e-1; % Trade-off parameter
 wd=std(data);
+<<<<<<< HEAD
 [invm,misfit] = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+=======
+invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta);
+>>>>>>> b07cadf12b55ebd87b963729f80e787f8f8c0199
 save('data/model_out.dat','-ascii','invm')
 
 figure;plot(misfit);

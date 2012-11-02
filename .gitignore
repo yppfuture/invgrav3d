@@ -7,6 +7,7 @@
 *~
 *.mat
 *mexa*
+*.asv
 
 # Project Files
 ###################

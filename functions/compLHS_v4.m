@@ -1,4 +1,4 @@
-function [LHS] = compLHS_v4(m, G, Wr, wd, nX, nY, nZ, dX, dY, dZ, beta, alphaS)
+function [LHS] = compLHS_v4(m, G, Wr, wd, nX, nY, nZ, dX, dY, dZ, beta)
 
 mcell = nX * nY * nZ;
 
@@ -95,7 +95,9 @@ for jj = 1 : nY
     for ii = 1 : nX
         
         for kk = 1 : nZ
+
             WstWsm(count) = alphaS * m(count) * dX(ii)* dY(jj) * dZ(kk);
+
             count=count+1;
         end
     end
@@ -110,11 +112,14 @@ N=size(G, 1);
 
 % GtGm = zeros(mcell, 1);
 for ii = 1 : M 
+
     for jj = ii : M        
         GtG_rowii=0;
+
         for kk = 1 : N
             GtG_rowii = GtG_rowii + G(kk + N *(ii-1)) * G(kk+ N *(jj-1));
         end
+
         
       LHS(ii) = LHS(ii) + GtG_rowii * m(jj) * wd;
 
@@ -122,11 +127,12 @@ for ii = 1 : M
               LHS(jj) = LHS(jj) + GtG_rowii * m(ii) * wd;
           end
 
+
     end
-    LHS(ii) = LHS(ii) + ( WstWsm(ii) + dmx(ii) + dmy(ii) + dmz(ii) ) * Wr(ii);
-    
+    LHS(ii) = LHS(ii) +  ( WstWsm(ii) + dmx(ii) + dmy(ii) + dmz(ii) ) * Wr(ii);
+    LHS(ii) = beta * LHS(ii) ;
 end
 
-LHS = beta * LHS ;
+
 
 return

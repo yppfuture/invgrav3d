@@ -123,10 +123,10 @@ for ii = 1 : M
           end
 
     end
-    LHS(ii) = LHS(ii) +  ( WstWsm(ii) + dmx(ii) + dmy(ii) + dmz(ii) ) * Wr(ii);
-    LHS(ii) = beta * LHS(ii) ;
+    LHS(ii) = LHS(ii) + ( WstWsm(ii) + dmx(ii) + dmy(ii) + dmz(ii) ) * Wr(ii);
+    
 end
 
-
+LHS = beta * LHS ;
 
 return
