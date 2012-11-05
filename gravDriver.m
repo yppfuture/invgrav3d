@@ -27,14 +27,14 @@ Lz = min(dz);
 % background=2.7; %Background density
 
 mcell = nx * ny * nz;
-mdata = length(data);
+mdata = length(d);
 % target=0.5;     %Expected density contrast
 
 %Modify data and model to substract background density
 % model=zeros(size(rho,1)*size(rho,2),1);
 % model(:)=rho(:)-background;
 
-m0 = ones(mcell, 1)*1e-5;
+m0 = ones(mcell, 1)*1e-6;
 % m0(:)=background;
 
 %% Compute compact model using iterative method
@@ -42,23 +42,31 @@ m0 = ones(mcell, 1)*1e-5;
 % alphax=alphaS*Lx^2;
 % alphaz=alphaS*Lz^2;
 
-alphaS = 1 / Lx.^2;
+alphaS = 1 / Lx.^2 * 1e-2;
 alphax = 1.0;
 alphay = 1.0;
 alphaz = 1.0;
 
 % Define coefficients
+wd=ones(mdata,1) ./std(d);
+beta=1e+0; % Trade-off parameter
+invm=m0;
+count=1;
+while count<2
 
-beta=1e-1; % Trade-off parameter
-wd=std(data);
-<<<<<<< HEAD
-[invm,misfit] = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
-=======
-invm = conjGrad(m0, G, data, Wr, wd, nx, ny, nz, dx, dy, dz, beta);
->>>>>>> b07cadf12b55ebd87b963729f80e787f8f8c0199
+[invm,error] = conjGrad(invm, G, d, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+
+misfit(count)=sum( wd .* (G * invm -d) .^2) ^ (0.5)
+beta=beta/2;
+count=count+1;
+figure;plot(error);
 save('data/model_out.dat','-ascii','invm')
+end
 
-figure;plot(misfit);
+
+
+% figure;plot(misfit);
+
 % misfit=sqrt(sum((G*invm-mdata).^2));
 % Slicer(reshape(invm, nz, nx, ny))
 

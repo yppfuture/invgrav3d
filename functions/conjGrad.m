@@ -11,7 +11,7 @@ function [m0,error] = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, dx, dy, dz, beta, a
 %wd = std(d);
 
 
-LHS = compLHS_v4(m0, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+LHS = compLHS_v5(m0, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
 
 RHS = G' * d;
 
@@ -30,7 +30,7 @@ error(count) = rnorm / dnorm;
 while (count) < 10%error>=10e-4
 tic
 
-    Ap = compLHS_v4(p, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+    Ap = compLHS_v5(p, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
 
     alpha =rold ./ (p' * Ap);
 

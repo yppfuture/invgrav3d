@@ -1,13 +1,13 @@
 function [G,Wr] = forwardGrav_v2(nX, nY, nZ, X0, Y0, Z0, dX, dY, dZ, ObsX,ObsY,ObsZ)
 %Create forward operator
 
-NewtG=6.6738e-5;
+NewtG=6.6738e-0;
 
 R0 = min( [min(dX) min(dY) min(dZ)] );
 mcell = nX * nY * nZ;
 
 %Pre-allocate for weighting matrix
-Wr=zeros(mcell,1);
+Wr=zeros(1,mcell);
 
 %Pre-allocate space for one row of forward operator
 G=zeros(1,nX * nY * nZ);
@@ -34,13 +34,25 @@ for jj = 1 : nY
             dz(1) = ( ObsZ - Z + dZ(kk) /2 ) ;
             dz(2) = ( ObsZ - Z - dZ(kk) /2 ) ;
             
+            % Compute the distance weighting
+            % R: Distance from observation to prism
+            % V: Volume of prism
+            % Wr: Solution to the integral dv/(R+R0)^2
+            
+            R= ((ObsX - X) ^ 2 + (ObsY - Y)^2 + (ObsZ - Z)^2) ^(0.5);
+            
+            V= dX(ii) * dY(jj) * dZ(kk);
+            
+%             Wr(count) = (4 * pi * ( R + R0 - ( R0^2 / (R + R0)) - ...
+%                 2 * R0 * log( R + R0 ))) ^ 2 / V ^ (0.5);
+            Wr(count)= Z + R0;
             % Compute contribution from each corners
             for aa= 1:2
                 for bb= 1:2
                     for cc= 1:2
                         r = (dx(aa) ^ 2 + dy(bb) ^ 2 + dz(cc) ^ 2) ^ (0.50);
                         
-                       G(count) = G(count) + NewtG * ...
+                       G(count) =G(count) + NewtG * ...
                            (-1) ^ aa * (-1) ^ bb * (-1) ^ cc * ...                           
                            (dx(aa) * log ( dy(bb) + r ) + ...
                            dy(bb) * log ( dx(aa) + r ) - ...
@@ -49,9 +61,7 @@ for jj = 1 : nY
                 end                
             end
             
-            R= (ObsX - X) ^ 2 + (ObsY - Y)^2 + (ObsZ - Z)^2;
-            % Compute the distance weighting
-            Wr(count) = (1 / (R + R0) ^2)^2 ;
+            G(count)=G(count) * ( ( Z + R0 )^2);
                         
             % Compute the forward operator
             

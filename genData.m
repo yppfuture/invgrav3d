@@ -26,12 +26,12 @@ Y0 = 0;
 Z0 = 0;
 
 %Define target size [X Y lenght(x) length(y)]
-target = [10 10 6];
+target = [8 8 4];
 
 
 %Densitiy 2D model
 background = 0;
-anomaly = 500;
+anomaly = 0.5;
 
 figure (1)
 % load smile;
@@ -62,26 +62,30 @@ G=zeros(n,mcell);
 % Compute depth weigthing matrix
 % mode 0: distance weigthing , 1: depth weighting
 % pow: Power of the exponentiel decay (default 2 for grav, 3 for mag)
-Wr=zeros(mcell,1);
-mode=0;
-pow=2;
+Wr=zeros(1,mcell);
 
 % Build forward operator
 for ii=1:n;
-       [G(count,:),wr] = forwardGrav_v2(nx, ny, nz, X0, Y0, Z0,...
+       [G(count,:),Wr] = forwardGrav_v2(nx, ny, nz, X0, Y0, Z0,...
             dx, dy, dz, ObsX(ii), ObsY(ii), ObsZ);
 %         wr=CompWr(nx,ny,nz,dx,dy,dz,X0,Y0,Z0,ObsX(ii), ObsY(ii), ObsZ, mode,pow);
-        Wr=Wr+wr;
+%         Wr=Wr+wr;
+%         G(count,:)=G(count,:) .* (1 ./ wr) .^2;
 count = count + 1;
 end
 
 % Square root for the sum of the squares
 % Plus another square root of result because inside the objective function, 
 % but we will square after in WrtWr ... so only one sqrt.
-Wr=Wr.^(1/4);
+% Wr=Wr.^(1/2);
 
 % Normalize depth weighting with the largest value
 Wr=Wr./max(Wr);
+
+% % Re-weight the kernel with distance weigthing function
+% for ii= 1 : size (G,1)
+%     G(ii,:)=G(ii,:) .* (1 ./ (Wr.^1));
+% end
 
 %Create data matrix
 data = G * m ;
@@ -93,7 +97,7 @@ d = data + noise;
 % d=data.*(unifrnd(-0.05,0.05,length(data),1)+1);
 
 % save ('original','data');
-save('data/data.mat','data');
+save('data/data.mat','d');
 save('data/kernel.mat','G');
 save('data/model.mat','m');
 save('data/Wr.mat','Wr');
@@ -114,7 +118,8 @@ save('data/model.dat', '-ascii', 'm')
 save('data/Obs_grav.dat', '-ascii', 'd')
 
 %Create UBC model weight file 
-save('data/Wr.dat', '-ascii', 'Wr')
+Wr_out=Wr';
+save('data/Wr.dat', '-ascii', 'Wr_out')
 
 fid=fopen('data/UBC_mesh.msh', 'w');
 fprintf(fid, '%i %i %i\n', nx, ny, nz);

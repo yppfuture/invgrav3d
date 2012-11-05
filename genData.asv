@@ -31,7 +31,7 @@ target = [10 10 6];
 
 %Densitiy 2D model
 background = 0;
-anomaly = 500;
+anomaly = 0.5;
 
 figure (1)
 % load smile;
@@ -78,13 +78,13 @@ end
 % Square root for the sum of the squares
 % Plus another square root of result because inside the objective function, 
 % but we will square after in WrtWr ... so only one sqrt.
-Wr=Wr.^(1/2);
+% Wr=Wr.^(1/4);
 
 % Normalize depth weighting with the largest value
 Wr=Wr./max(Wr);
 
 %Create data matrix
-data = G * m ;
+data = G * m * 1e-3;
 
 %Corrupt with 5% random noise
 % d = awgn(data,-12.5);
