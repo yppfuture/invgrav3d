@@ -62,4 +62,4 @@ X = kron( e(nobs)', kron3( e(ny), xc, e(nz))) - kronobs(ObsX);
 Y = kron( e(nobs)', kron3( yc, e(nx), e(nz))) - kronobs(ObsY);
 R = (X.^2 + Y.^2 + Z.^2).^(3/2);
 G2 = Z .* H .* 1./R;
-surf(reshape(G2*m(:),nx,ny))
+surf(reshape(G2*m(:),11,11))
