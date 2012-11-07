@@ -5,18 +5,18 @@ clear all; close all;
 % Program a quadratic regularization inversion to check forward operator
 % accuracy against analytic solutions
 
-Lx = 4;
-Ly = 3;
-Lz = 2;
+Lx = 10;
+Ly = 15;
+Lz = 20;
 
 
-nx = 3;
-ny = 4;
-nz = 3;
+nx = 20;
+ny = 10;
+nz = 15;
 
-x = linspace(0,Lx,nx);
-y = linspace(0,Ly,ny);
-z = linspace(0,Lz,nz);
+x = linspace(1,Lx,nx);
+y = linspace(1,Ly,ny);
+z = linspace(1,Lz,nz);
 
 dx = Lx/nx;
 dy = Ly/ny;
@@ -24,7 +24,7 @@ dz = Lz/nz;
 
 dv = dx*dy*dz;
 
-[X Y Z] = meshgrid(x,y,z)
+[X Y Z] = meshgrid(x,y,z);
 
 % When I ordered the matrices to accomodate the matlab vectorize order (
 % for when we multiply m(:).  the kronecker products required to build the
@@ -56,14 +56,13 @@ G = dv*(kron(e(nx*ny)',Z(:)')-zeros(nx*ny,nx*ny*nz))...
 +((kron(e(nx*ny)',Z(:)')-zeros(nx*ny,nx*ny*nz)).^2)).^(-3/2));
 
 m = zeros(nx,ny,nz);
-m(2,2,1) = 2000;
+m(5:5,5) = 2000;
 % m(1:2,1:2,15) = 2000;
 
 d = reshape(G*m(:),nx,ny);
 figure()
 imagesc(x,y,d)
 
-% m(1:2,1:2,15) = 2000;
 
 % e = ones(nx+1,1)
 % D = spdiags([-e e],[0 1],nx,nx)
