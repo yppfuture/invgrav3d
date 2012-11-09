@@ -47,7 +47,7 @@ dx = 1./(max(dx)) .* dx;
 
 % Plot
 plot(xc, dx, 'r*')
-plotMesh(x, x ./max(x) ) % plot in percents on Y axis
+plotmesh(x, x ./max(x) ) % plot in percents on Y axis
 title(sprintf('Graded mesh with curve = %i, weight = %1.2f, ncells = %i',...
     c, w, n), 'fontSize', 14)
 ylabel('1D Cell size %')
