@@ -25,12 +25,16 @@ yc = centre(y);
 nz = length(zc);
 nx = length(xc);
 ny = length(yc);
+
 nnn = nz * nx * ny;
 
 dx = diff(x);
 dy = diff(y);
 dz = diff(z);
 
+dxc = diff(xc);
+dyc = diff(yc);
+dzc = diff(zc);
 
 %[Z X Y] = meshgrid(z, x, y);
 
@@ -55,11 +59,12 @@ h = kron3(e(ny), e(nx), dz(:)) .* ...
 
 % Kron dimensions to size G and subtract obs distance
 H = kron( e(nobs), h');
-Z = kron( e(nobs), kron3( e(ny)', e(nx)', zc)) - kronobs(ObsZ);
-X = kron( e(nobs), kron3( e(ny)', xc, e(nz)')) - kronobs(ObsX);
-Y = kron( e(nobs), kron3( yc, e(nx)', e(nz)')) - kronobs(ObsY);
+Z = kron( e(nobs), kron3( e(ny)', e(nx)', zc')) - kronobs(ObsZ);
+X = kron( e(nobs), kron3( e(ny)', xc', e(nz)')) - kronobs(ObsX);
+Y = kron( e(nobs), kron3( yc', e(nx)', e(nz)')) - kronobs(ObsY);
 R = (X.^2 + Y.^2 + Z.^2).^(3/2);
 G = Z .* H .* 1./R;
+
 
 
 m = ones(nz, nx, ny);
@@ -67,21 +72,18 @@ m(round(0.5*nz),...
     round(0.5*nx) : round(0.5*nx) + 1,...
     round(0.5*ny) : round(0.5*ny) + 1 ) = 4;
 
-%m = m + noise;
 
-% m(1:2,1:2,15) = 2000;
+
 d = G*m(:);
-d = d + 0.1 * mean(d) * randn(length(d), 1);
+d = d + 0.05 * mean(d) * randn(length(d), 1);
 dcube = reshape(d, size(ObsX) );
 figure()
 imagesc(xc,yc,dcube)
 title(sprintf('max data = %f', max(d(:))))
 axis square
-% m(1:2,1:2,15) = 2000;
 
 
-
-GRAD = gradientOp(nz, nx, ny, dz, dx, dy);
+GRAD = gradientOp(nz, nx, ny, dzc, dxc, dyc);
 
 Im = spdiags(e(nnn) * h(1), 0, nnn, nnn);
 
