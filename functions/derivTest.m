@@ -33,7 +33,7 @@ for jj = 1 : 10
     h = 10^(-jj);
 
     err2 = norm(f(x + h*v) - fx); %#ok<*AGROW>
-    err3 = norm(f(x + h*v) - fx - h * dfdx * v);
+    err3 = norm(f(x + h*v) - fx - h * dfdx' * v);
 
     fprintf('%3.2e    %3.2e    %3.2e\n',h , err2, err3)
     
