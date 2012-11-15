@@ -49,7 +49,7 @@ alphaz = 1.0;
 
 % Define coefficients
 wd=ones(mdata,1) ./std(d);
-beta=1e+0; % Trade-off parameter
+beta=1e-1; % Trade-off parameter
 invm=m0;
 count=1;
 while count<2
