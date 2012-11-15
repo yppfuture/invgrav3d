@@ -101,6 +101,7 @@ imagesc(xc,yc,dcube)
 title(sprintf('max data = %f', max(d(:))))
 axis square
 % m(1:2,1:2,15) = 2000;
+
 D = @(n,k) spdiags([-e(n ) .* 1/k(1), e(n ) .* 1/k(1)], [-1 0], n +1 , n);
 
 
