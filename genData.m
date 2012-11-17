@@ -9,25 +9,26 @@ clear all
 addpath data
 addpath functions
 
-%length of land surveyed
-nx = 15;
-ny = 15;
-nz = 8;
 
-mcell=nx*ny*nz;
+
+
 
 % For now all the cells have dimension 1x1x1
-dx = ones(1,nx);
-dy = ones(1,ny);
-dz = ones(1,nz);
+dX = [1 1 ones(1,12) 1 1];
+dY = [1 1 ones(1,12) 1 1];
+dZ = [ones(1,10) 1 1];
 
 X0 = 0;
 Y0 = 0;
 Z0 = 0;
 
-%Define target size [X Y lenght(x) length(y)]
-target = [8 8 4];
+%length of land surveyed
+nX = length(dX);
+nY = length(dY);
+nZ = length(dZ);
 
+
+mcell=nX*nY*nZ;
 
 %Densitiy 2D model
 background = 0;
@@ -39,18 +40,26 @@ figure (1)
 % load Trio
 % load BigU
 % load UpDown
-[model] = genModel(nx, ny, nz, background, anomaly, target);
-% model=zeros(nz,nx,ny);
+target = [10 12 5];
+[model] = genModel(nX, nY, nZ, background, anomaly, target);
+
+target = [4 5 6];
+[model] = genModel(nX, nY, nZ, model, anomaly, target);
+
+target = [12 5 5];
+[model] = genModel(nX, nY, nZ, model, anomaly, target);
+
+% model=zeros(nZ,nX,nY);
 % model((target(3)-2):(target(3)+2),(target(1)-2):(target(1)+2),(target(2)-2):(target(2)+2))=1;
 % imagesc (rho);
 
 hold on
 
-m=reshape(model,nx*ny*nz,1);
+m=reshape(model,nX*nY*nZ,1);
 
 
 %Create data points
-[ObsX, ObsY] = meshgrid(5:12,5:12);
+[ObsX, ObsY] = meshgrid(2:1:14,2:1:14);
 ObsZ = 1;
 n = size(ObsX, 2) * size(ObsY, 1);
 
@@ -66,9 +75,9 @@ Wr=zeros(1,mcell);
 
 % Build forward operator
 for ii=1:n;
-       [G(count,:),Wr] = forwardGrav_v2(nx, ny, nz, X0, Y0, Z0,...
-            dx, dy, dz, ObsX(ii), ObsY(ii), ObsZ);
-%         wr=CompWr(nx,ny,nz,dx,dy,dz,X0,Y0,Z0,ObsX(ii), ObsY(ii), ObsZ, mode,pow);
+       [G(count,:),Wr] = forwardGrav_v2(nX, nY, nZ, X0, Y0, Z0,...
+            dX, dY, dZ, ObsX(ii), ObsY(ii), ObsZ);
+%         wr=CompWr(nX,nY,nZ,dX,dY,dZ,X0,Y0,Z0,ObsX(ii), ObsY(ii), ObsZ, mode,pow);
 %         Wr=Wr+wr;
 %         G(count,:)=G(count,:) .* (1 ./ wr) .^2;
 count = count + 1;
@@ -92,7 +101,7 @@ data = G * m ;
 
 %Corrupt with 5% random noise
 % d = awgn(data,-12.5);
-noise = ( (data.*.03) .* randn(length(data),1) );
+noise = ( (data.*.02) .* randn(length(data),1) );
 d = data + noise;
 % d=data.*(unifrnd(-0.05,0.05,length(data),1)+1);
 
@@ -104,7 +113,7 @@ save('data/Wr.mat','Wr');
 
 % save ('kernel2','G2');
 
-d_obs = reshape(d, size(ObsX,2), size(ObsY,1));
+d_obs = reshape(d, size(ObsY,1), size(ObsX,2));
 
 figure (1)
 imagesc(d_obs)
@@ -122,20 +131,20 @@ Wr_out=Wr';
 save('data/Wr.dat', '-ascii', 'Wr_out')
 
 fid=fopen('data/UBC_mesh.msh', 'w');
-fprintf(fid, '%i %i %i\n', nx, ny, nz);
+fprintf(fid, '%i %i %i\n', nX, nY, nZ);
 fprintf(fid, '%i %i %i\n', X0, Y0, Z0);
 
 
-for jj=1:nx
-    fprintf(fid, '%4.2f ', dx(jj));
+for jj=1:nX
+    fprintf(fid, '%4.2f ', dX(jj));
 end
 fprintf(fid,'\n');
-for ii=1:ny
-           fprintf(fid,'%4.2f ', dy(ii));
+for ii=1:nY
+           fprintf(fid,'%4.2f ', dY(ii));
 end
 fprintf(fid, '\n');
-for kk=1 : nz
-       fprintf(fid, '%4.2f ', dz(kk));
+for kk=1 : nZ
+       fprintf(fid, '%4.2f ', dZ(kk));
 end
 fclose(fid);
 

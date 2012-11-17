@@ -1,4 +1,4 @@
-function [LHS] = compLHS_v5(m, G, Wr, WctWc, wd, nX, nY, nZ, dX, dY, dZ, beta, alphaS)
+function [LHS] = compLHS_v6(m, G, Wr, WctWc, wd, nX, nY, nZ, dX, dY, dZ, beta, alphaS)
 
 mcell = nX * nY * nZ;
 
@@ -12,18 +12,17 @@ for jj = 1 : nY
     for ii = 1 : nX
         
         for kk = 1 : nZ
-            if ii == 1
-                dmx(count) = (m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + nZ) * dX(ii + 1) * dY(jj) * dZ(kk) ) / dX(ii);
+            if count <= nZ
+                dmx(count) = (m(count)  - ...
+                    m(count + nZ) ) * dY(jj) * dZ(kk) / dX(ii);
                 
-            elseif ii==nX 
-                    dmx(count) = (-m(count - nZ) * dX(ii - 1) * dY(jj) * dZ(kk) + ...
-                    2*m(count) * dX(ii) * dY(jj) * dZ(kk)) / dX(ii);
+            elseif count > nZ &&  count <= ( nY * nZ * (nX-1))
+                    dmx(count) = ( -m(count - nZ) + -m(count + nZ) + ...
+                    2 * m(count) ) * dY(jj) * dZ(kk) / dX(ii);
             
-            else 
-                dmx(count) = (-m(count - nZ) * dX(ii - 1)* dY(jj) * dZ(kk) + ...
-                    2 * m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + nZ) * dX(ii + 1) * dY(jj) * dZ(kk)) / dX(ii);
+            elseif  count > ( nY * nZ * (nX-1)) && count <= ( nY * nZ * (nX-1))+ nZ
+                dmx(count) = ( m(count)  - ...
+                    m(count - nZ)) * dY(jj) * dZ(kk) / dX(ii);
             end
             dmx(count)=dmx(count) * (1/Wr(count));
             count=count+1;
@@ -40,17 +39,17 @@ for jj = 1 : nY
         
         for kk = 1 : nZ
             if jj == 1
-                dmy(count) = (m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + nZ * nX) * dX(ii) * dY(jj + 1) * dZ(kk) ) / dY(jj);
+                dmy(count) = (m(count) - ...
+                    m(count + nZ * nX) ) * dX(ii) * dZ(kk) / dY(jj);
                 
             elseif jj==nY 
-                    dmy(count) = (-m(count - nZ*nX) * dX(ii) * dY(jj - 1) * dZ(kk) + ...
-                    2*m(count) * dX(ii) * dY(jj) * dZ(kk)) / dY(jj);
+                    dmy(count) = (-m(count - nZ*nX) + ...
+                    m(count)) * dX(ii) * dZ(kk) / dY(jj);
             
             else 
-                dmy(count) = (-m(count - nZ * nX) * dX(ii )* dY(jj - 1) * dZ(kk) + ...
-                    2 * m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + nZ* nX) * dX(ii) * dY(jj + 1) * dZ(kk)) / dY(jj);
+                dmy(count) = (-m(count - nZ * nX) + ...
+                    2 * m(count) - ...
+                    m(count + nZ* nX) ) * dX(ii) * dZ(kk) / dY(jj);
             end
             dmy(count)=dmy(count) * (1/Wr(count));
             count=count+1;
@@ -68,17 +67,17 @@ for jj = 1 : nY
         
         for kk = 1 : nZ
             if kk == 1
-                dmz(count) = (m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + 1) * dX(ii) * dY(jj) * dZ(kk + 1))/ dZ(kk);
+                dmz(count) = (m(count) - ...
+                    m(count + 1)) * dX(ii) * dY(jj) / dZ(kk);
                 
             elseif kk==nZ 
-                    dmz(count) = (-m(count - 1) * dX(ii) * dY(jj) * dZ(kk - 1) + ...
-                    2*m(count) * dX(ii) * dY(jj) * dZ(kk))/ dZ(kk);
+                    dmz(count) = (-m(count - 1) + ...
+                    m(count)) * dX(ii) * dY(jj) / dZ(kk);
             
             else 
-                dmz(count) = (-m(count - 1) * dX(ii )* dY(jj) * dZ(kk - 1) + ...
-                    2 * m(count) * dX(ii) * dY(jj) * dZ(kk) - ...
-                    m(count + 1) * dX(ii) * dY(jj) * dZ(kk + 1))/ dZ(kk);
+                dmz(count) = (-m(count - 1) + ...
+                    2 * m(count) - ...
+                    m(count + 1)) * dX(ii) * dY(jj) / dZ(kk);
             end
             dmz(count)=dmz(count) * (1/Wr(count)) ^2;
             count=count+1;

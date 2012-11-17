@@ -1,4 +1,4 @@
-function [m0,error] = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, dx, dy, dz, beta, alphaS)
+function [m0,error] = conjGrad(m0, G, d, Wr, WctWc, wd, nx ,ny ,nz, dx, dy, dz, beta, alphaS)
 
 
 %Compute residual iteratively. Computes in order:
@@ -10,9 +10,9 @@ function [m0,error] = conjGrad(m0, G, d, Wr, wd, nx ,ny ,nz, dx, dy, dz, beta, a
 
 %wd = std(d);
 
-
-LHS = compLHS_v5(m0, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
-
+tic
+LHS = compLHS_v6(m0, G, Wr, WctWc, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+toc
 RHS = G' * d;
 
 r = (LHS - RHS);
@@ -27,10 +27,10 @@ error(count) = rnorm / dnorm;
 % hold on
 % misfit(count) = norm(r)^2;
 
-while (count) < 10%error>=10e-4
+while (count) < 5%error>=10e-4
 tic
 
-    Ap = compLHS_v5(p, G, Wr, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
+    Ap = compLHS_v6(p, G, Wr, WctWc, wd, nx, ny, nz, dx, dy, dz, beta, alphaS);
 
     alpha =rold ./ (p' * Ap);
 

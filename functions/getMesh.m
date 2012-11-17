@@ -11,13 +11,13 @@ for ii = 1 : xmax
     dX(ii) = mesh(header + ii);
 end
 
-header = ceil(ii / 3) + header;
+header = ceil(ii / 3) *3 + header;
 
 for jj = 1 : ymax
     dY(jj) = mesh(header + jj);
 end
 
-header = ceil(jj / 3) + header;
+header = ceil(jj / 3) *3 + header;
 
 for kk = 1 : zmax
     dZ(kk) = mesh(header + kk);

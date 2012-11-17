@@ -3,7 +3,7 @@ function [model] = genModel(nx, ny, nz, background, anomaly, target)
 %density of country rock, density of ore body
 %Vector target gives the center position of the ore body
 %Size of the target has been fixed to 2 meters across
-model=ones(nz, nx, ny) * background;
+model=ones(nz, nx, ny) .* background;
 
 
 for ii = (target(1) + [-1 : 1])

@@ -16,20 +16,20 @@ count = 1;
 
 for jj = 1 : nY 
     %First compute de location of the center of the cell
-    Y = Y0 + jj * dY(jj) - dY(jj) /2;
+    Y = Y0 + sum( dY(1:jj)) - dY(jj) /2;
     %Then the distance between the cell and the observation
     dy(1) = ( ObsY - Y + dY(jj) /2 ) ;
     dy(2) = ( ObsY - Y - dY(jj) /2 ) ;
     
    for ii = 1 : nX 
-        X = X0 + ii * dX(ii) - dX(ii) /2;
+        X = X0 + sum( dX(1:ii)) - dX(ii) /2;
 %         dX = ( X - ObsX ) ^2;
 
         dx(1) = ( ObsX - X + dX(jj) /2 ) ;
         dx(2) = ( ObsX - X - dX(jj) /2 ) ;
         
        for kk = 1: nZ 
-            Z = Z0 - kk * dZ(kk) + dZ(kk) /2;
+            Z = Z0 - sum( dZ(1:kk)) + dZ(kk) /2;
 %             dZ = ( Z - ObsZ ) ^2;
             dz(1) = ( ObsZ - Z + dZ(kk) /2 ) ;
             dz(2) = ( ObsZ - Z - dZ(kk) /2 ) ;
@@ -39,13 +39,13 @@ for jj = 1 : nY
             % V: Volume of prism
             % Wr: Solution to the integral dv/(R+R0)^2
             
-            R= ((ObsX - X) ^ 2 + (ObsY - Y)^2 + (ObsZ - Z)^2) ^(0.5);
-            
-            V= dX(ii) * dY(jj) * dZ(kk);
+%             R= ((ObsX - X) ^ 2 + (ObsY - Y)^2 + (ObsZ - Z)^2) ^(0.5);
+%             
+%             V= dX(ii) * dY(jj) * dZ(kk);
             
 %             Wr(count) = (4 * pi * ( R + R0 - ( R0^2 / (R + R0)) - ...
 %                 2 * R0 * log( R + R0 ))) ^ 2 / V ^ (0.5);
-            Wr(count)= Z + R0;
+            Wr(count)= abs(Z) + R0;
             % Compute contribution from each corners
             for aa= 1:2
                 for bb= 1:2
